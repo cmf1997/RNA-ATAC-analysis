@@ -1,7 +1,5 @@
 ## ATAC sequences data analysis
-
-*adjust based on diffbind and cinaR*
-[DiffBind](https://bioconductor.org/packages/release/bioc/html/DiffBind.html) and [cinaR](https://eonurk.github.io/cinaR/index.html)
+*adjust based on [DiffBind](https://bioconductor.org/packages/release/bioc/html/DiffBind.html) and [cinaR](https://eonurk.github.io/cinaR/index.html)
 
 
 ### process atac-seq data
@@ -34,11 +32,6 @@ install.packages("~/software/CmfcinaR_1.0.0.tar.gz",type="source",repos=NULL,lib
 ```
 
 
-
-### 
-
-
-
 ### Save txdb for use
 
 ```
@@ -54,7 +47,6 @@ saveDb(GRCh38,"GRCh38_Txdb.sqlite")
 
 # also support other species ...
 ```
-
 
 
 ### Usage
@@ -97,11 +89,11 @@ txdb <- AnnotationDbi::loadDb("./GRCm39_Txdb.sqlite")
 
 
 # run cina for DA
+# generate contrast from sample.csv
 contrasts<- c("B6", "B6", "B6", "B6", "B6", "NZO", "NZO", "NZO", "NZO", "NZO", "NZO", 
               "B6", "B6", "B6", "B6", "B6", "NZO", "NZO", "NZO", "NZO", "NZO", "NZO")
-results <- cinaR(norm.count.matrix, contrasts, reference.genome = "GRCh38._Txdb.sqlite", DA.choice=4, experiment.type == "ATAC-Seq"))
+results <- cinaR(norm.count.matrix, contrasts, reference.genome = "GRCh38._Txdb.sqlite", DA.choice=4, comparison.scheme = "OVO, experiment.type == "ATAC-Seq")
 ```
-
 
 
 ### GO and KEGG
@@ -111,13 +103,12 @@ library(clusterprofiler)
 ```
 
 
-
 ### Remove package
 
 ```
 remove.packages("CmfcinaR",lib="/lustre/home/acct-medzy/medzy-cai/.conda/envs/R-4.1.3/lib/R/library/")
+detach(package:CmfcinaR)
 ```
-
 
 
 ### Build package after modifying the code
@@ -127,4 +118,3 @@ git clone cinaR
 # modify #
 R CMD build Cmf-cinaR  
 ```
-
