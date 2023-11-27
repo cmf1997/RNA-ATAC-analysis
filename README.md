@@ -1,21 +1,28 @@
 ## ATAC sequences data analysis
-*adjust based on [DiffBind](https://bioconductor.org/packages/release/bioc/html/DiffBind.html) and [cinaR](https://eonurk.github.io/cinaR/index.html)
+*adjust based on [DiffBind](https://bioconductor.org/packages/release/bioc/html/DiffBind.html) and [cinaR](https://eonurk.github.io/cinaR/index.html)*
+
+
+
+### QC
+```shell
+# use fastqc to generate qc plot and multiqc to integrate in one
+fastqc -o ${path}/fastqc -t 20 ${pathfastq}/*.fastq.gz
+multiqc .
+```
+
+Trimmomatic
+
 
 
 ### process atac-seq data
-Align
+*Align - Remove PCR Replicates - Call peaks - idr done by standard encode pipeline*
 
-Remove PCR Replicates
-
-Call peaks
-
-idr
-
-can be done by standard encode pipeline
+Set scripts/ample.json properly and run scripts/1_atac_batch_slurm.sh and scripts/2_atac_croo_matadata.sh
+*if idr is true, IDR can be used with biological replicates to output a conservative "peak set can be interpreted as high confidence peaks". Also, IDR can be used with pseudo replicates to output an optimal "peak set.*
 
 #### Requirement 
 
-```
+```R
 BiocManager::install(c("ChIPseeker", "DESeq2", "edgeR", "fgsea","GenomicRanges", "limma", "preprocessCore", "sva"))
 ```
 
@@ -23,18 +30,18 @@ BiocManager::install(c("ChIPseeker", "DESeq2", "edgeR", "fgsea","GenomicRanges",
 *Custom cinaR package for analysis ATAC-seq or RNA-seq*
 Package need download from cmf github
 
-```
-git clone 
+```shell
+wget CmfcinaR_1.0.0.tar.gz
 ```
 
-```
+```R
 install.packages("~/software/CmfcinaR_1.0.0.tar.gz",type="source",repos=NULL,lib="/lustre/home/acct-medzy/medzy-cai/.conda/envs/R-4.1.3/lib/R/library/")
 ```
 
 
 ### Save txdb for use
 
-```
+```R
 library(GenomicFeatures)
 # download gtf from http://www.ensembl.org/info/data/ftp/index.html
 gtf_file <- "Mus_musculus.GRCm39.104.gtf.gz"
@@ -51,7 +58,7 @@ saveDb(GRCh38,"GRCh38_Txdb.sqlite")
 
 ### Usage
 
-```
+```R
 library(AnnotationDbi) 
 library(CmfcinaR)
 library(DiffBind)
@@ -86,26 +93,26 @@ norm.count.matrix <- dba.peakset(DBdata, bRetrieve=TRUE, DataType=DBA_DATA_FRAME
 # load txdb 
 txdb <- AnnotationDbi::loadDb("./GRCm39_Txdb.sqlite")
 
-
-
 # run cina for DA
 # generate contrast from sample.csv
-contrasts<- c("B6", "B6", "B6", "B6", "B6", "NZO", "NZO", "NZO", "NZO", "NZO", "NZO", 
-              "B6", "B6", "B6", "B6", "B6", "NZO", "NZO", "NZO", "NZO", "NZO", "NZO")
-results <- cinaR(norm.count.matrix, contrasts, reference.genome = "GRCh38._Txdb.sqlite", DA.choice=4, comparison.scheme = "OVO, experiment.type == "ATAC-Seq")
+contrasts <- c("B6", "B6", "B6", "B6", "B6", "NZO", "NZO", "NZO", "NZO", "NZO", "NZO", "B6", "B6", "B6", "B6", "B6", "NZO", "NZO", "NZO", "NZO", "NZO", "NZO")
+# or
+contrasts <- read.table(config_path)$group
+results <- cinaR(norm.count.matrix, contrasts, reference.genome = "GRCh38._Txdb.sqlite", DA.choice=4, comparison.scheme = "OVO", experiment.type == "ATAC-Seq")
 ```
 
 
 ### GO and KEGG
 
-```
+```R
 library(clusterprofiler)
+source(scripts/GO_analysis.R)
 ```
 
 
 ### Remove package
 
-```
+```R
 remove.packages("CmfcinaR",lib="/lustre/home/acct-medzy/medzy-cai/.conda/envs/R-4.1.3/lib/R/library/")
 detach(package:CmfcinaR)
 ```
@@ -113,7 +120,7 @@ detach(package:CmfcinaR)
 
 ### Build package after modifying the code
 
-```
+```shell
 git clone cinaR
 # modify #
 R CMD build Cmf-cinaR  

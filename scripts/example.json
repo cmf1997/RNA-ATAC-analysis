@@ -1,0 +1,34 @@
+{
+    "atac.title" : "ATAC-ENCODE-Standard-Pipeline",
+    "atac.description" : "Cmf-Run1",
+
+    "atac.pipeline_type" : "atac",
+    "atac.align_only" : false,
+    "atac.true_rep_only" : false,
+
+    "atac.genome_tsv" : "/lustre/home/acct-medzy/medzy-cai/project/ATAC/Reference_genome/hg38/hg38.tsv",
+    "atac.blacklist": "/lustre/home/acct-medzy/medzy-cai/project/ATAC/Reference_genome/hg38/hg38-blacklist.v2.bed.gz",
+
+    "atac.paired_end" : true,
+
+    "atac.fastqs_rep1_R1" : [ "data/rep1_T1_R1.fastq.gz"],
+    "atac.fastqs_rep1_R2" : [ "data/rep1_T1_R2.fastq.gz"],
+    "atac.fastqs_rep2_R1" : [ "data/rep2_T1_R1.fastq.gz"],
+    "atac.fastqs_rep2_R2" : [ "data/rep2_T1_R2.fastq.gz"],
+
+    "atac.auto_detect_adapter" : true,
+
+    "atac.multimapping" : 4,
+    "atac.mapq_thresh" : 30,
+    "atac.dup_marker" : "picard",
+    "atac.no_dup_removal" : false,
+
+    "atac.cap_num_peak" : 300000,
+    "atac.pval_thresh" : 0.01,
+    "atac.smooth_win" : 150,
+
+    "atac.filter_chrs" : ["chrM", "MT"],
+
+    "atac.enable_idr" : true,
+    "atac.idr_thresh" : 0.05
+}
